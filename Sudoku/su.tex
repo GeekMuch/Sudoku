@@ -1,0 +1,697 @@
+\documentclass{article}
+
+\usepackage{graphicx}
+\usepackage[hidelinks]{hyperref}
+\usepackage{lipsum}
+\usepackage{listings}
+ \begin{document}
+ \begin{titlepage}
+  \begin{center}
+	\line(2,0){300}\\
+	\huge{Introduction to Programming - \\ Project Part 1}\\
+	\line(1,0){150}\\	
+	\textsc{\large Supervisor: Peter Schneider-Kamp}\\
+	\textsc{\large Instructor: Martin Østergaard Villumsen}\\	
+	\textsc{\large DM 536}\\
+	\textsc{\large D1}\\	
+	[10cm] 
+ \end{center}
+ 
+\begin{flushright}
+ \textsc{\normalsize Amar Djebbara\\
+ Birthday:\\
+ \# 26-07-1991\\
+ \today}
+\end{flushright}
+\end{titlepage}
+
+
+\tableofcontents
+
+\newpage
+
+\section{Specification}\label{sec:ass1}
+
+Sudoku is a number puzzle game, witch can be a nuisance when they swallow your time to solve. To be able to solve such troublesome problem, a possible solution would be a brute force algorithm that could try all possible integers in every cell. To do that we have to use a mathematical method called recursion. This is a very slow method which uses a set of rules to find the numbers while backtracking every cell. \\
+
+   
+The second task is to build a GUI using implementations from the JAVA library, by building the GUI class for the Sudoku solver called "SudokuGUI". In this class the JFileChooser is implemented to be able to get the file, which contains the Sudoku cells we have to solve. By adding 3 buttons, gives the user ability to pick a file, solving the Sudoku and outputting the result field.\\
+
+
+\section{Design}\label{sec:ass2}
+The main plan was to take every class, step by step. This will give a clear idea of what the program is suppose to do. After understanding what was asked , it was relatively easy to plan the program structure, at least that was the idea.
+
+\section{Implementation}\label{sec:ass3}
+The plan was to follow the tasks in the project description. But after a careful reading and a few conversation with the instructor, the code was ready to be planned. The first tasks was to create a field class that could contain all the cells.\\   
+To do that we have to create a public class as such:
+
+\begin{lstlisting}[language=Tex, basicstyle=\footnotesize\ttfamily,
+numbers=left,stepnumber=1,frame=lrtb, morekeywords={assert}, tabsize=4,
+breaklines=false]
+public class Field {
+
+  public static final int SIZE = 9;
+
+  public static int model[][];
+  public static int inputmodel[][];
+
+  public Field() {
+    // make new array of size SIZExSIZE
+    Field.model = new int[SIZE][SIZE];
+    Field.inputmodel = new int[SIZE][SIZE];
+    // initialize with empty cells
+    init(SIZE-1, SIZE-1);
+  }
+
+
+\end{lstlisting}
+
+As you can see, there is two field because later on in the code it will be a storing an Array witch is used in the SudokuGUI class.\\
+
+The next important step in this build is that we need some instructions the program can follow so it could solve the sudoku by backtraicking every cell unto all cells are done.
+As the soduko rules states, we have to check every row, column and box of 3x3. 
+Class had to be made as such:
+
+\begin{lstlisting}[language=Tex, 
+basicstyle=\footnotesize\ttfamily,
+numbers=left,stepnumber=1,frame=lrtb, morekeywords={assert}, tabsize=4,
+breaklines=false]
+public boolean checkRow(int val, int i) {
+	  for( int j = 0; j < 9; j++ )
+	         if( Field.model[i][j] == val  )
+	            return false ;
+
+	      return true ;
+  }
+
+  /** checks if val is an acceptable value for the column j */
+  public boolean checkCol(int val, int j) {
+	    for( int i = 0; i < 9; i++ )
+	         if( Field.model[i][j] == val )
+	            return false ;
+	    
+	    return  true;
+  }
+
+  /** checks if val is an acceptable value for the box around
+   *  the cell at row i and column j
+   */
+  public boolean checkBox(int val, int i, int j) {
+      
+	i = (i / 3) * 3 ;
+    j = (j / 3) * 3 ;
+
+      for( int r = 0; r < 3; r++ )
+         for( int c = 0; c < 3; c++ )
+        	 if( Field.model[i+r][j+c] == val )
+        		 return false ;
+
+      return true ;
+  }
+\end{lstlisting}
+This line of code is how the program opens the FDL files. It also sets a variable name called "s", which is used later in the program 
+
+\newpage
+
+Now that the class is working and reading the files. The next step is to make the rules, and apply them, so that the turtle can draw then in their respective depths. this is achieved as such:\\
+
+\begin{lstlisting}[language=Tex, basicstyle=\footnotesize\ttfamily,
+numbers=left,stepnumber=1,frame=lrtb, morekeywords={assert}, tabsize=4,
+breaklines=false]
+def row(x):
+	l = []
+	for i in range(len(x)):
+		if x[i] in s.rule.keys():
+			l.extend(s.rule[x[i]])
+		else:
+			l.extend(x[i])
+	return l
+
+def frac(x, depth):
+	if depth == 0:
+		return x 
+	else:
+		return row(frac(x, depth - 1))
+
+print frac(s.start, s.depth)
+\end{lstlisting}
+
+For the GUI, a whole new java file is made, because of all the special tool of java libraries, witch gives us the ability to interact with the program and order it to do our hard work of backtracking every cell. \\
+The first thing we had to implement is the layout of the field.
+This is achieved as such: 
+
+\begin{lstlisting}[language=Tex, basicstyle=\footnotesize\ttfamily,
+numbers=left,stepnumber=1,frame=lrtb, morekeywords={assert}, tabsize=4,
+breaklines=false]
+JPanel f1 = new JPanel();
+	
+		
+        f1.setLayout( new GridLayout(9,9));
+   
+        add(f1, BorderLayout.CENTER);
+       
+        // buttons for the lulz :D
+        
+        area1 = new Button[9][9];
+        // Create an empty view
+        for( int i = 0; i < 9; i++ )
+           for( int j = 0; j < 9; j++ )
+           {
+        	  area1[i][j]  = new Button() ;
+        	  f1.add(area1[i][j]) ;
+              
+           }
+         
+        
+        f1.setVisible(true);
+\end{lstlisting}
+\newpage
+The next step is to implement 3 buttons, "Choose file", "START" and "Save file". 
+Using JfileChooser it was possible to pick a ".txt" file that contained the sudoku field. 
+\begin{lstlisting}[language=Tex, basicstyle=\footnotesize\ttfamily,
+numbers=left,stepnumber=1,frame=lrtb, morekeywords={assert}, tabsize=4,
+breaklines=false]
+JPanel f1 = new JPanel();
+	
+		
+        f1.setLayout( new GridLayout(9,9));
+   
+        add(f1, BorderLayout.CENTER);
+       
+        // buttons for the lulz :D
+        
+        area1 = new Button[9][9];
+        // Create an empty view
+        for( int i = 0; i < 9; i++ )
+           for( int j = 0; j < 9; j++ )
+           {
+        	  area1[i][j]  = new Button() ;
+        	  f1.add(area1[i][j]) ;
+              
+           }
+         
+        
+        f1.setVisible(true);
+\end{lstlisting}
+
+\newpage
+
+\section{Testing}\label{sec:test}
+The big first big challenge, was to use the recursion to solve every cell, after some hard work and a lot of coffee it was possible to solve every sudoku i threw at it.
+this the finale solve class:
+\begin{lstlisting}[language=Tex, basicstyle=\footnotesize\ttfamily,
+numbers=left,stepnumber=1,frame=lrtb, morekeywords={assert}, tabsize=4,
+breaklines=true]
+public static void solve(Field f, int i, int j) throws SolvedException, InterruptedException {
+
+	   
+    if (i >= Field.SIZE) {
+    	solved2 = f.toString();
+    	solvedf = Field.model; 
+    	System.out.println(f);
+        throw new SolvedException();
+        }
+     if(Field.model[i][j] != 0) {
+    	 nextCell(f, i, j);
+    	 SolvedFieldView();
+    	 }     
+     else {
+        for( int val = 1; val < 10; val++) {
+           if(f.tryValue(val, i, j)) {
+        	//System.out.println(f); 
+        	nextCell(f, i, j);
+        	SolvedFieldView();
+        	
+        	Thread.sleep( 50 ) ;
+        	}
+        }
+
+        f.clear(i,j);
+        SolvedFieldView();
+     }
+  } // End of solve method   
+\end{lstlisting}  
+
+\newpage
+
+\section{Conclusion}\label{sec:con}
+After several hours of coding, it finally came together. The program works with every single .txt file, respective to its content. And the GUI work's fine. There are room for MANY improvements witch surely will be taking care of, such as using BorderLayout to get the 3x3 boxes highlighted and so on. The most important thing is that it can solve a sudoku and display it.  
+
+\newpage
+
+\appendix
+
+\begin{center}
+ \section*{Appendix}
+\end{center}
+
+\section{SudokuGUI.java}\label{sec:triangle}
+\begin{lstlisting}[language=Tex,
+basicstyle=\footnotesize\ttfamily,
+numbers=left,stepnumber=1, 
+morekeywords={assert},
+tabsize=4,
+breaklines=true]
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.geom.Area;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.LineBorder;
+
+
+	
+public class SudokuGUI extends JFrame implements ActionListener {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	static JButton btn1 = new JButton("Choose File");
+	static JButton btn2 = new JButton("START");
+	JButton btn3 = new JButton("Save output");
+	JTextField filename = new JTextField();
+	static JTextField dir = new JTextField();
+	public static Button area1[][];
+
+	
+	
+	int returnval;		
+	
+    public SudokuGUI() {
+		
+		
+		super("Sudoku Solver v0.9");
+	
+		JPanel f1 = new JPanel();
+	
+		
+        f1.setLayout( new GridLayout(9,9));
+   
+        add(f1, BorderLayout.CENTER);
+       
+        // buttons for the lulz :D
+        
+        area1 = new Button[9][9];
+        // Create an empty view
+        for( int i = 0; i < 9; i++ )
+           for( int j = 0; j < 9; j++ )
+           {
+        	  area1[i][j]  = new Button() ;
+        	  f1.add(area1[i][j]) ;
+              
+           }
+         
+        
+        f1.setVisible(true);
+			
+	    // buttons
+        final JPanel ButtonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        ButtonPanel.setLayout(new BorderLayout());
+        ButtonPanel.add(btn1);
+        ButtonPanel.add(btn2);
+        ButtonPanel.add(btn3);
+       
+         
+        Border LineBorder  = new LineBorder(Color.lightGray);
+        ButtonPanel.setBorder(LineBorder);
+        
+        BoxLayout horizontal = new BoxLayout(ButtonPanel, BoxLayout.X_AXIS);
+        ButtonPanel.setLayout(horizontal);
+        
+        FlowLayout flow = new FlowLayout();
+        ButtonPanel.setLayout(flow);
+        
+        add(ButtonPanel, BorderLayout.SOUTH);
+        setVisible(true);
+        
+        btn1.addActionListener(new openfile()); 
+        btn2.addActionListener(new startSolve()); 
+        btn3.addActionListener(new saveFile()); 
+    }
+   public static class openfile implements ActionListener{
+
+	public static String path;
+	public static String infield = new String();
+
+	public void actionPerformed(ActionEvent e) {
+		
+		if (e.getSource() == btn1) {
+			 JFileChooser c = new JFileChooser();
+			 int returnVal = c.showOpenDialog(null);
+			 if(returnVal == JFileChooser.APPROVE_OPTION){ 
+			 File file = c.getSelectedFile();
+			 dir.setText(c.getSelectedFile().getAbsolutePath().toString());
+			 path = file.toString();
+	 	 	 Field field = new Field();
+			 String s = openfile.path;
+			 field.fromFile(s);
+			 System.out.println(field);
+			 infield = field.toString();
+			 NewFieldView();
+			 
+			 
+			}
+			 
+		} 
+	}
+ }
+   public static class startSolve implements ActionListener{
+
+	public static String donefield = new String();
+	   
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() == btn2) {
+			Field field = new Field();
+			field.fromFile(openfile.path);
+			try {
+				Sudoku.solve(field, 0, 0);
+				
+			} catch (SolvedException e1) {
+				System.out.println("Done sol");
+				SolvedFieldView();
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			
+			
+			}
+		}
+   }
+		
+    public class saveFile implements ActionListener{
+	  public void actionPerformed(ActionEvent e) {
+		if (e.getSource() == btn3) {
+			PrintWriter out = null;
+			try {
+				out = new PrintWriter(new FileWriter("SolvedSudoku.txt"));
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} 
+			out.print(Sudoku.solved2); 
+			out.close();
+			}	
+		}
+    }
+
+	@Override
+	public void actionPerformed(ActionEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+    
+    
+
+
+
+	public static void NewFieldView() {
+		for( int i = 0; i < 9; i++ )
+	         for( int j = 0; j < 9; j++ )
+	            if( Field.inputmodel[i][j] != 0 )
+	               area1[i][j].setLabel( String.valueOf(Field.model[i][j]) ) ;
+	            else
+	            	area1[i][j].setLabel( "" ) ;
+	   }
+	public static void SolvedFieldView() {
+		for( int i = 0; i < 9; i++){
+	         for( int j = 0; j < 9; j++){
+	        	 if( Field.model[i][j] != 0 ){
+	               area1[i][j].setLabel( String.valueOf(Field.model[i][j]) ) ;
+	        	 }
+	        	 else {
+		            	area1[i][j].setLabel( "" ) ;
+	        	 }
+	         }
+		}
+	   }
+	
+	
+}// end of SUdokuGUI
+   
+
+
+\end{lstlisting}
+
+\newpage
+
+\section{Sudoku.java}\label{sec:tree}
+\begin{lstlisting}[language=Tex,
+basicstyle=\footnotesize\ttfamily,
+numbers=left,stepnumber=1, 
+morekeywords={assert},
+tabsize=4,
+breaklines=true]
+
+
+
+public class Sudoku extends SudokuGUI{
+
+/**
+	 * 
+	 */
+  private static final long serialVersionUID = 1L;
+  
+  public static String solved2;
+  public static int[][] solvedf;
+   
+  public static void main(String[] args) throws SolvedException{  
+	SudokuGUI sudokugui = new SudokuGUI(); 
+	sudokugui.setSize(550, 500);
+	sudokugui.setDefaultCloseOperation(EXIT_ON_CLOSE);
+	sudokugui.setLocationRelativeTo(null);
+
+	Field field = new Field();
+	field.fromFile(openfile.path);
+	//field.model[i][j] = field.inputmodel[i][j];
+	//NewFieldView();
+	
+
+	/*Field field = new Field();
+	System.out.println();
+	//String s = openfile.path;
+	String s = "/home/byteme/Desktop/test1.txt";
+	field.fromFile(s);
+	System.out.println(field);
+	solve(field, 0, 0);
+	System.out.println(field);
+	System.out.println("       ##SOLVED##");*/
+	
+   	} 
+
+  public static void solve(Field f, int i, int j) throws SolvedException, InterruptedException {
+
+	   
+    if (i >= Field.SIZE) {
+    	solved2 = f.toString();
+    	solvedf = Field.model; 
+    	System.out.println(f);
+        throw new SolvedException();
+        }
+     if(Field.model[i][j] != 0) {
+    	 nextCell(f, i, j);
+    	 SolvedFieldView();
+    	 }     
+     else {
+        for( int val = 1; val < 10; val++) {
+           if(f.tryValue(val, i, j)) {
+        	//System.out.println(f); 
+        	nextCell(f, i, j);
+        	SolvedFieldView();
+        	
+        	Thread.sleep( 50 ) ;
+        	}
+        }
+
+        f.clear(i,j);
+        SolvedFieldView();
+     }
+  } // End of solve method   
+  
+  // Calls solve for the next cell 
+  public static void nextCell(Field f, int i, int j ) throws SolvedException, InterruptedException {
+	  if (j < 8)
+        	solve(f, i, j+1);
+    	 else
+        	solve(f, i+1, 0);
+  }
+
+
+  
+  
+  
+  
+  
+  
+}//end of file 
+  
+
+
+\end{lstlisting}
+
+\newpage
+
+\section{Field.java}\label{sec:pro}
+\begin{lstlisting}[language=Tex,
+basicstyle=\footnotesize\ttfamily,
+numbers=left,stepnumber=1, 
+morekeywords={assert},
+tabsize=4,
+breaklines=true]
+
+package Field;
+
+import java.io.*;
+import java.util.*;
+
+
+/**
+ * Abstract Data Type for Sudoku playing field
+ */
+public class Field {
+
+  public static final int SIZE = 9;
+
+  public int model[][] ;
+
+  public Field() {
+    // make new array of size SIZExSIZE
+    this.model = new int[SIZE][SIZE];
+    // initialize with empty cells
+    init(SIZE-1, SIZE-1);
+  }
+
+  private void init(int i, int j) {
+    if (i < 0) {
+       // all rows done!
+    } else if (j < 0) {
+      // this row done - go to next!
+      init(i-1, SIZE-1);
+    } else {
+      this.clear(i,j);
+      init(i, j-1);
+    }
+  }
+
+  public void fromFile(String fileName) {
+    try {
+      Scanner sc = new Scanner(new File(fileName));
+      fromScanner(sc, 0, 0);
+    } catch (FileNotFoundException e) {
+      // :-(
+    }
+  }
+
+  private void fromScanner(Scanner sc, int i, int j) {
+    if (i >= SIZE) {
+      // all rows done!
+    } else if (j >= SIZE) {
+      // this row done - go to next!
+      fromScanner(sc, i+1, 0);
+    } else {
+      try {
+        int val = Integer.parseInt(sc.next());
+        this.model[i][j] = val;
+      } catch (NumberFormatException e) {
+        // skip this cell
+      }
+      fromScanner(sc, i, j+1);
+    }
+  }
+
+  public String toString() {
+    StringBuffer res = new StringBuffer();
+    for (int i = 0; i < SIZE; i++) {
+      if (i % 3 == 0) {
+        res.append("+-------+-------+-------+\n");
+      }
+      for (int j = 0; j < SIZE; j++) {
+        if (j % 3 == 0) {
+          res.append("| ");
+        }
+        int val = this.model[i][j];
+        res.append(val > 0 ? val+" " : "  ");
+      }
+      res.append("|\n");
+    }
+    res.append("+-------+-------+-------+");
+    return res.toString();
+  }
+
+  /** returns false if the value val cannot be placed at
+   *  row i and column j. returns true and sets the cell
+   *  to val otherwise.
+   */
+  public boolean tryValue(int val, int i, int j) {
+    if (!checkRow(val, i)) {
+      return false;
+    }
+    if (!checkCol(val, j)) {
+      return false;
+    }
+    if (!checkBox(val, i, j)) {
+      return false;
+    }
+    this.model[i][j] = val;
+    return true;
+  }
+
+  /** checks if the cell at row i and column j is empty,
+   *  i.e., whether it contains 0
+   */
+  public boolean isEmpty(int i, int j) {
+   if (this.model[i][j] > 0)
+      return false;
+   	  return true;
+  }
+  /** sets the cell at row i and column j to be empty, i.e.,
+   *  to be 0
+   */
+  public void clear(int i, int j) {
+    this.model[i][j] = 0;
+  }
+
+  /** checks if val is an acceptable value for the row i */
+  private boolean checkRow(int val, int i) {
+	  for( int j = 0; j < 9; j++ )
+	         if( this.model[i][j] == val )
+	            return false ;
+
+	      return true ;
+  }
+
+  /** checks if val is an acceptable value for the column j */
+  private boolean checkCol(int val, int j) {
+	    for( int i = 0; i < 9; i++ )
+	         if( this.model[i][j] == val )
+	            return false ;
+	    
+	    return  true;
+  }
+
+  /** checks if val is an acceptable value for the box around
+   *  the cell at row i and column j
+   */
+  private boolean checkBox(int val, int i, int j) {
+      
+	i = (i / 3) * 3 ;
+    j = (j / 3) * 3 ;
+
+      for( int r = 0; r < 3; r++ )
+         for( int c = 0; c < 3; c++ )
+         if( this.model[i+r][j+c] == val )
+            return false ;
+
+      return true ;
+  }
+
+}
+\end{lstlisting}
+
+\end{document}
