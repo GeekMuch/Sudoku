@@ -2,9 +2,6 @@
 
 public class Sudoku extends SudokuGUI {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 1L;
 
     public static String solved2;
@@ -17,21 +14,10 @@ public class Sudoku extends SudokuGUI {
         sudokugui.setLocationRelativeTo(null);
 
         Field field = new Field();
-        field.fromFile(openfile.path);
-        //field.model[i][j] = field.inputmodel[i][j];
-        //NewFieldView();
 
-
-	/*Field field = new Field();
-	System.out.println();
-	//String s = openfile.path;
-	String s = "/home/byteme/Desktop/test1.txt";
-	field.fromFile(s);
-	System.out.println(field);
-	solve(field, 0, 0);
-	System.out.println(field);
-	System.out.println("       ##SOLVED##");*/
-
+        if (field == null) {
+            field.fromFile(openfile.path);
+        }
     }
 
     public static void solve(Field f, int i, int j) throws SolvedException, InterruptedException {
@@ -46,10 +32,10 @@ public class Sudoku extends SudokuGUI {
         if (Field.model[i][j] != 0) {
             nextCell(f, i, j);
             SolvedFieldView();
+
         } else {
             for (int val = 1; val < 10; val++) {
                 if (f.tryValue(val, i, j)) {
-                    //System.out.println(f);
                     nextCell(f, i, j);
                     SolvedFieldView();
 

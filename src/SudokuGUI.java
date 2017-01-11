@@ -55,7 +55,7 @@ public class SudokuGUI extends JFrame implements ActionListener {
         
         f1.setVisible(true);
 			
-	    // buttons
+	    // buttons for estetics
         final JPanel ButtonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         ButtonPanel.setLayout(new BorderLayout());
         ButtonPanel.add(btn1);
@@ -88,18 +88,24 @@ public class SudokuGUI extends JFrame implements ActionListener {
 		
 		if (e.getSource() == btn1) {
 			 JFileChooser c = new JFileChooser();
+
 			 int returnVal = c.showOpenDialog(null);
-			 if(returnVal == JFileChooser.APPROVE_OPTION){ 
+
+			 if(returnVal == JFileChooser.APPROVE_OPTION) {
+
 			 File file = c.getSelectedFile();
 			 dir.setText(c.getSelectedFile().getAbsolutePath().toString());
+
 			 path = file.toString();
 	 	 	 Field field = new Field();
+
 			 String s = openfile.path;
 			 field.fromFile(s);
+
 			 System.out.println(field);
 			 infield = field.toString();
+
 			 NewFieldView();
-			 
 			 
 			}
 			 
@@ -124,8 +130,6 @@ public class SudokuGUI extends JFrame implements ActionListener {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-			
-			
 			}
 		}
    }
@@ -153,9 +157,6 @@ public class SudokuGUI extends JFrame implements ActionListener {
 		
 	}
     
-    
-
-
 
 	public static void NewFieldView() {
 		for( int i = 0; i < 9; i++ )
