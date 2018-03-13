@@ -1,2 +1,1 @@
-This a SudokuGUI that solves Sudokus (9x9)
-#SudokuSolver
+SudokuGUI that solves sudokus with size of 9x9
